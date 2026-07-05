@@ -1,6 +1,7 @@
 {
   "model_path": "./models/sound/PDA.onnx",
   "log_level": "INFO",
+  "audio_device": null,
   "plug_in_messages": [
     "External power source detected.",
     "Charging sequence initiated.",

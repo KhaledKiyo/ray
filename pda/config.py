@@ -75,6 +75,21 @@ class Config:
         """Get plug-out event messages."""
         return self.get("plug_out_messages", ["Warning. Operating on internal battery."])
 
+    def get_audio_device(self) -> Optional[int]:
+        """Get audio output device ID (None uses default).
+        
+        Returns:
+            Audio device ID or None for default device
+        """
+        device = self.get("audio_device")
+        if device is not None:
+            try:
+                return int(device)
+            except (ValueError, TypeError):
+                logging.warning(f"Invalid audio_device value: {device}, using default")
+                return None
+        return None
+
     @staticmethod
     def _resolve_path(path: str) -> str:
         """Resolve relative path to absolute path, expanding ~ and env vars.

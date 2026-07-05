@@ -80,6 +80,39 @@ class TestConfig:
 
             Path(f.name).unlink()
 
+    def test_config_audio_device_none(self):
+        """Test audio device is None by default."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump({"log_level": "INFO"}, f)
+            f.flush()
+
+            config = Config(f.name)
+            assert config.get_audio_device() is None
+
+            Path(f.name).unlink()
+
+    def test_config_audio_device_valid(self):
+        """Test audio device can be set as integer."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump({"audio_device": 5}, f)
+            f.flush()
+
+            config = Config(f.name)
+            assert config.get_audio_device() == 5
+
+            Path(f.name).unlink()
+
+    def test_config_audio_device_invalid(self):
+        """Test invalid audio device returns None with warning."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump({"audio_device": "invalid"}, f)
+            f.flush()
+
+            config = Config(f.name)
+            assert config.get_audio_device() is None
+
+            Path(f.name).unlink()
+
 
 class TestVoiceEngine:
     """Tests for VoiceEngine class."""

@@ -18,6 +18,7 @@ class PowerMonitor:
         voice_engine: VoiceEngine,
         plug_in_messages: Optional[List[str]] = None,
         plug_out_messages: Optional[List[str]] = None,
+        audio_device: Optional[int] = None,
     ) -> None:
         """Initialize power monitor.
 
@@ -25,6 +26,7 @@ class PowerMonitor:
             voice_engine: VoiceEngine instance for announcements
             plug_in_messages: List of messages to announce when charger plugged in
             plug_out_messages: List of messages to announce when charger unplugged
+            audio_device: Audio device ID (None uses default), or specific device
 
         Raises:
             RuntimeError: If udev context cannot be initialized
@@ -37,6 +39,7 @@ class PowerMonitor:
             raise RuntimeError(f"Failed to initialize power monitor: {e}")
 
         self.pda = voice_engine
+        self.audio_device = audio_device
         self.plug_in_messages = plug_in_messages or [
             "External power source detected."
         ]
@@ -91,7 +94,12 @@ class PowerMonitor:
             logging.error(f"Error during monitoring: {e}")
 
     def _handle_plug_in(self) -> None:
-        """Handle AC adapter connection event."""
+        """Handle AC adapter connection event.
+        
+        Rapid duplicate events from udev are suppressed by state check.
+        If plug events fire faster than speech completes, only the first
+        announcement plays (debounce behavior, not queue).
+        """
         with self._state_lock:
             if self._current_state is True:
                 return  # Already plugged in, avoid duplicate events
@@ -101,7 +109,7 @@ class PowerMonitor:
         text = random.choice(self.plug_in_messages)
         
         with self._speech_lock:
-            self.pda.speak(text)
+            self.pda.speak(text, device=self.audio_device)
 
     def _handle_plug_out(self) -> None:
         """Handle AC adapter disconnection event."""
@@ -114,7 +122,7 @@ class PowerMonitor:
         text = random.choice(self.plug_out_messages)
         
         with self._speech_lock:
-            self.pda.speak(text)
+            self.pda.speak(text, device=self.audio_device)
 
     def get_current_state(self) -> Optional[bool]:
         """Get current power state.

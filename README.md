@@ -2,6 +2,8 @@
 
 A Linux system utility that announces power events (plug/unplug) using text-to-speech via Piper TTS and ONNX models.
 
+[![Tests](https://github.com/yourusername/pda-voice-monitor/actions/workflows/test.yml/badge.svg)](https://github.com/yourusername/pda-voice-monitor/actions/workflows/test.yml)
+
 ## Features
 
 - 🔌 **Real-time Power Monitoring**: Detects AC adapter connection/disconnection events
@@ -86,6 +88,7 @@ Edit `config.json` to customize behavior:
 {
   "model_path": "./models/sound/PDA.onnx",
   "log_level": "INFO",
+  "audio_device": null,
   "plug_in_messages": [
     "External power source detected.",
     "Charging sequence initiated."
@@ -96,6 +99,16 @@ Edit `config.json` to customize behavior:
   ]
 }
 ```
+
+### Configuration Options
+
+- **model_path**: Path to Piper ONNX model file (default: `./models/sound/PDA.onnx`)
+- **log_level**: Logging verbosity: `DEBUG`, `INFO`, `WARNING`, `ERROR` (default: `INFO`)
+- **audio_device**: Audio output device ID (default: `null` for system default)
+  - Set to device number to use a specific audio device
+  - Find available devices: `python -c "import sounddevice; print(sounddevice.query_devices())"`
+- **plug_in_messages**: List of messages to announce when charger is connected
+- **plug_out_messages**: List of messages to announce when charger is disconnected
 
 ### Environment Variables
 
@@ -126,7 +139,27 @@ Checks current power state and announces it, then exits.
 PDA_MODEL_PATH="/path/to/custom/model.onnx" python main.py
 ```
 
-## Project Structure
+### Custom Audio Device
+
+List available audio devices:
+
+```bash
+python -c "import sounddevice; print(sounddevice.query_devices())"
+```
+
+Then set `audio_device` in `config.json` to the device ID:
+
+```json
+{
+  "audio_device": 5
+}
+```
+
+### Event Behavior
+
+- **Rapid plug/unplug**: If charger events fire faster than speech completes, only the first event is announced (debounce behavior via state check)
+- **Initial state**: On startup, current power state is logged but no announcement is made
+- **Thread safety**: Audio playback is serialized with locks to prevent overlapping announcements
 
 ```
 ray/
@@ -234,10 +267,10 @@ sudo systemctl status pda-monitor
 
 - [ ] Cross-platform support (Windows/macOS)
 - [ ] Multiple voice models
-- [ ] Custom audio output device selection
 - [ ] Web UI for configuration
 - [ ] Power profiles (sleep, game mode, etc.)
 - [ ] Integration with system power management
+- [ ] Advanced debounce/queue strategies for rapid plug/unplug events
 
 ## License
 

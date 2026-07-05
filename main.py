@@ -142,6 +142,7 @@ def main() -> int:
             voice,
             plug_in_messages=config.get_plug_in_messages(),
             plug_out_messages=config.get_plug_out_messages(),
+            audio_device=config.get_audio_device(),
         )
     except RuntimeError as e:
         logging.error(f"Failed to initialize power monitor: {e}")
