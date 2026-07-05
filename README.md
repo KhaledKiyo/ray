@@ -22,59 +22,61 @@ A Linux system utility that announces power events (plug/unplug) using text-to-s
 
 - **Linux** (this tool is Linux-specific, uses `pyudev`)
 - **Python 3.8+**
-- **Piper TTS model file** (see below)
+- **Piper TTS model file** — download or provide your own (see "Model Setup" below)
 
 ### Quick Start
 
 ```bash
-# Clone or download the project
+# 1. Clone or download the project
 cd ray
 
-# Create virtual environment
+# 2. Create virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# Verify the model file exists
-ls -lh models/sound/PDA.onnx
+# 4. Download/setup the voice model (IMPORTANT: do this before running)
+bash setup_model.sh
 
-# Test it
+# 5. Test it
 python main.py --once
 
-# Run continuously
+# 6. Run continuously
 python main.py
 ```
+
+### Model Setup
+
+**The `PDA.onnx` model file is required and must be in place before running.** You have three options:
+
+1. **Automatic download** (recommended for first-time users):
+   ```bash
+   bash setup_model.sh
+   ```
+   This downloads a default English US voice. To use a different model:
+   ```bash
+   bash setup_model.sh "https://url-to-model.onnx" ./models/sound
+   ```
+   Piper TTS models are available at: https://huggingface.co/rhasspy/piper
+
+2. **Manual setup**: Download a Piper ONNX model and place it at `models/sound/PDA.onnx`
+
+3. **Custom path**: Use environment variable to override the default model location:
+   ```bash
+   PDA_MODEL_PATH=/path/to/your/model.onnx python main.py
+   ```
 
 ### System Installation
 
 ```bash
-# Install as a package (requires model file to exist)
+# Install as a package (model must already be set up)
 pip install .
 
 # Run as a command
 pda-monitor --help
 ```
-
-### Model File Setup
-
-The `PDA.onnx` file (voice model) is not included in the repository. You need to either:
-
-1. **Automatic setup**: Run the provided script (easiest)
-   ```bash
-   bash setup_model.sh
-   ```
-   This downloads a default English US model. To use a different model:
-   ```bash
-   bash setup_model.sh "https://url-to-model.onnx" ./models/sound
-   ```
-
-2. **Manual setup**: Place a Piper TTS ONNX model at `models/sound/PDA.onnx`
-
-3. **Environment variable**: `PDA_MODEL_PATH=/path/to/model.onnx python main.py`
-
-**Finding models**: Piper TTS models are available at https://huggingface.co/rhasspy/piper
 
 ## Configuration
 
