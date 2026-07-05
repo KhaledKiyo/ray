@@ -8,18 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## [1.0.0] - 2026-07-05
 
 ### Added
-- Initial production release
-- Full configuration system with JSON and environment variable support
+- Initial release
+- Configuration system with JSON and environment variable support
 - VoiceEngine class for Piper TTS synthesis with error handling
-- PowerMonitor class for real-time power event detection
+- PowerMonitor class for real-time power event detection (Linux only)
 - Comprehensive logging with configurable levels
 - CLI with argument parsing (--once, --verbose, --config options)
 - Config validation with helpful error messages
-- Complete test suite with pytest
+- Basic test coverage for config and voice engine
 - Systemd service setup documentation
 - Threading for non-blocking audio playback
 - State tracking to prevent duplicate power event announcements
-- Cross-platform error handling
+- Error handling in file operations and hardware access
 
 ### Documentation
 - Comprehensive README with usage examples
@@ -28,20 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Systemd service configuration guide
 - API documentation in docstrings
 - Contributing guidelines
+- Quick start guide
 
-### Quality Assurance
-- Type hints throughout codebase
-- Proper exception handling
-- Logging at INFO/DEBUG/ERROR levels
-- Unit tests for core components
-- Configuration validation
-- Syntax and format compliance
-
-### Project Structure
-- Modular architecture (pda package)
-- Separated concerns (voice_engine.py, power_monitor.py, config.py)
-- Professional packaging (setup.py, pyproject.toml)
-- Standard project files (.gitignore, LICENSE, CONTRIBUTING.md)
+### Known Limitations
+- Linux only (requires pyudev for power monitoring)
+- May require elevated privileges for power supply access
+- Audio synthesis performance depends on system resources
+- Test suite covers configuration and initialization; hardware integration tests require Linux environment with udev/audio access
 
 ## Future Roadmap
 

@@ -18,6 +18,12 @@ A Linux system utility that announces power events (plug/unplug) using text-to-s
 
 ## Installation
 
+### Prerequisites
+
+- **Linux** (this tool is Linux-specific, uses `pyudev`)
+- **Python 3.8+**
+- **Piper TTS model file** (see below)
+
 ### Quick Start
 
 ```bash
@@ -31,19 +37,44 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the monitor
+# Verify the model file exists
+ls -lh models/sound/PDA.onnx
+
+# Test it
+python main.py --once
+
+# Run continuously
 python main.py
 ```
 
 ### System Installation
 
 ```bash
-# Install as a package
+# Install as a package (requires model file to exist)
 pip install .
 
 # Run as a command
-pda-monitor
+pda-monitor --help
 ```
+
+### Model File Setup
+
+The `PDA.onnx` file (voice model) is not included in the repository. You need to either:
+
+1. **Automatic setup**: Run the provided script (easiest)
+   ```bash
+   bash setup_model.sh
+   ```
+   This downloads a default English US model. To use a different model:
+   ```bash
+   bash setup_model.sh "https://url-to-model.onnx" ./models/sound
+   ```
+
+2. **Manual setup**: Place a Piper TTS ONNX model at `models/sound/PDA.onnx`
+
+3. **Environment variable**: `PDA_MODEL_PATH=/path/to/model.onnx python main.py`
+
+**Finding models**: Piper TTS models are available at https://huggingface.co/rhasspy/piper
 
 ## Configuration
 
@@ -213,16 +244,7 @@ MIT License - See LICENSE file
 
 ## Contributing
 
-Contributions welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for new features
-4. Submit a pull request
-
-## Author
-
-Created as a fun Linux system utility project.
+Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Changelog
 

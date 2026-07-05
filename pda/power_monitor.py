@@ -11,7 +11,13 @@ from pda.voice_engine import VoiceEngine
 
 
 class PowerMonitor:
-    """Monitor AC power supply events using udev."""
+    """Monitor AC power supply events using udev.
+    
+    Note: _current_state is written from the udev polling thread (in start())
+    and read from the main thread (in --once mode). This is safe for boolean
+    values in CPython due to GIL, but could use a lock for production use
+    with other Python implementations.
+    """
 
     def __init__(
         self,
