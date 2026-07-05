@@ -143,8 +143,7 @@ ray/
 │       └── voices.json    # Voice metadata
 ├── config.json            # Configuration file
 ├── requirements.txt       # Python dependencies
-├── setup.py               # Package setup
-├── pyproject.toml         # Modern package config
+├── pyproject.toml         # Package configuration (PEP 517/518)
 └── README.md              # This file
 ```
 

@@ -19,7 +19,6 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from pda.config import Config
 from pda.power_monitor import PowerMonitor

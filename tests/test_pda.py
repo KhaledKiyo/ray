@@ -1,12 +1,13 @@
 """Unit tests for PDA Voice Monitor.
 
 These tests cover core functionality of the configuration and initialization
-systems. Integration tests with udev/audio hardware would require a full
-Linux environment with hardware access.
+systems. Hardware integration tests (udev/audio) require a Linux environment
+with actual hardware access and are skipped on other platforms.
 """
 
 import json
 import logging
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
@@ -148,6 +149,10 @@ class TestVoiceEngine:
 class TestPowerMonitor:
     """Tests for PowerMonitor class."""
 
+    @pytest.mark.skipif(
+        not sys.platform.startswith("linux"),
+        reason="pyudev only available on Linux"
+    )
     @patch("pda.power_monitor.pyudev.Context")
     def test_power_monitor_initialization(self, mock_context_class):
         """Test PowerMonitor initialization."""
@@ -161,13 +166,13 @@ class TestPowerMonitor:
         # Create dummy voice engine
         mock_voice = MagicMock()
         
-        # Should not raise
-        try:
-            monitor = PowerMonitor(mock_voice)
-            assert monitor.pda is mock_voice
-        except RuntimeError:
-            pytest.skip("pyudev not fully available in test environment")
+        monitor = PowerMonitor(mock_voice)
+        assert monitor.pda is mock_voice
 
+    @pytest.mark.skipif(
+        not sys.platform.startswith("linux"),
+        reason="pyudev only available on Linux"
+    )
     @patch("pda.power_monitor.pyudev.Context")
     def test_initial_state_no_adapter(self, mock_context_class):
         """Test initial state when no AC adapter found."""
@@ -179,32 +184,29 @@ class TestPowerMonitor:
 
         mock_voice = MagicMock()
         
-        try:
-            with patch("logging.warning") as mock_warn:
-                monitor = PowerMonitor(mock_voice)
-                # Should log warning about no AC adapter
-                assert monitor.get_current_state() is None
-        except RuntimeError:
-            pytest.skip("pyudev not available")
+        monitor = PowerMonitor(mock_voice)
+        # Should have None state if no adapter found
+        assert monitor.get_current_state() is None
 
-    def test_get_current_state(self):
-        """Test state tracking API."""
+    @pytest.mark.skipif(
+        not sys.platform.startswith("linux"),
+        reason="pyudev only available on Linux"
+    )
+    @patch("pda.power_monitor.pyudev.Context")
+    def test_get_current_state(self, mock_context_class):
+        """Test state tracking API with locks."""
         mock_voice = MagicMock()
         
-        with patch("pda.power_monitor.pyudev.Context") as mock_context_class:
-            mock_context = MagicMock()
-            mock_monitor = MagicMock()
-            mock_context_class.return_value = mock_context
-            mock_context.list_devices.return_value = []
-            mock_context.Monitor.from_netlink.return_value = mock_monitor
-            
-            try:
-                monitor = PowerMonitor(mock_voice)
-                # Initially None until first detection
-                state = monitor.get_current_state()
-                assert state is None or isinstance(state, bool)
-            except RuntimeError:
-                pytest.skip("pyudev not available")
+        mock_context = MagicMock()
+        mock_monitor = MagicMock()
+        mock_context_class.return_value = mock_context
+        mock_context.list_devices.return_value = []
+        mock_context.Monitor.from_netlink.return_value = mock_monitor
+        
+        monitor = PowerMonitor(mock_voice)
+        # Initially None until first detection
+        state = monitor.get_current_state()
+        assert state is None or isinstance(state, bool)
 
 
 if __name__ == "__main__":

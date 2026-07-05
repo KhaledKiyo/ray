@@ -77,9 +77,19 @@ class Config:
 
     @staticmethod
     def _resolve_path(path: str) -> str:
-        """Resolve relative path to absolute path."""
-        if path.startswith("./"):
-            return str(Path.cwd() / path[2:])
+        """Resolve relative path to absolute path, expanding ~ and env vars.
+        
+        Args:
+            path: Path string that may include ~ or env vars
+            
+        Returns:
+            Resolved absolute path
+        """
+        # Expand user home directory
+        path = os.path.expanduser(path)
+        # Expand environment variables
+        path = os.path.expandvars(path)
+        # Resolve to absolute path
         return str(Path(path).resolve())
 
     def validate(self) -> bool:

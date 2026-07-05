@@ -80,12 +80,9 @@ class VoiceEngine:
         try:
             wav_io = io.BytesIO()
 
-            # Use appropriate synthesis method
+            # Use synthesize_wav method (Piper TTS standard API)
             with wave.open(wav_io, "wb") as wav_file:
-                if hasattr(self.voice, "synthesize_wav"):
-                    self.voice.synthesize_wav(text, wav_file)
-                else:
-                    self.voice.synthesize(text, wav_file)
+                self.voice.synthesize_wav(text, wav_file)
 
             # Read back the audio data
             wav_io.seek(0)

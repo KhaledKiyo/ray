@@ -9,7 +9,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please email instead of using the issue tracker.
+If you discover a security vulnerability, please report it by opening a confidential security advisory on GitHub (select "Report a vulnerability" when creating an issue).
 
 **Do not publicly disclose the vulnerability until a fix is available.**
 
@@ -19,7 +19,7 @@ If you discover a security vulnerability, please email instead of using the issu
 - Potential impact
 - Suggested fix (if any)
 
-We will acknowledge your report within 48 hours and provide regular updates on progress toward a fix.
+We will acknowledge your report and provide updates on progress toward a fix.
 
 ## Security Best Practices
 

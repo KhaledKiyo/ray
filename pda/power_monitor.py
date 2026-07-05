@@ -11,13 +11,7 @@ from pda.voice_engine import VoiceEngine
 
 
 class PowerMonitor:
-    """Monitor AC power supply events using udev.
-    
-    Note: _current_state is written from the udev polling thread (in start())
-    and read from the main thread (in --once mode). This is safe for boolean
-    values in CPython due to GIL, but could use a lock for production use
-    with other Python implementations.
-    """
+    """Monitor AC power supply events using udev."""
 
     def __init__(
         self,
@@ -50,6 +44,8 @@ class PowerMonitor:
             "Warning. Operating on internal battery."
         ]
         self._current_state: Optional[bool] = None
+        self._state_lock = threading.Lock()
+        self._speech_lock = threading.Lock()
         self._check_initial_state()
 
     def _check_initial_state(self) -> None:
@@ -96,25 +92,29 @@ class PowerMonitor:
 
     def _handle_plug_in(self) -> None:
         """Handle AC adapter connection event."""
-        if self._current_state is True:
-            return  # Already plugged in, avoid duplicate events
+        with self._state_lock:
+            if self._current_state is True:
+                return  # Already plugged in, avoid duplicate events
+            self._current_state = True
         
-        self._current_state = True
         logging.info("🔌 Charger CONNECTED")
-
         text = random.choice(self.plug_in_messages)
-        threading.Thread(target=self.pda.speak, args=(text,), daemon=True).start()
+        
+        with self._speech_lock:
+            self.pda.speak(text)
 
     def _handle_plug_out(self) -> None:
         """Handle AC adapter disconnection event."""
-        if self._current_state is False:
-            return  # Already unplugged, avoid duplicate events
+        with self._state_lock:
+            if self._current_state is False:
+                return  # Already unplugged, avoid duplicate events
+            self._current_state = False
         
-        self._current_state = False
         logging.info("🔋 Charger DISCONNECTED")
-
         text = random.choice(self.plug_out_messages)
-        threading.Thread(target=self.pda.speak, args=(text,), daemon=True).start()
+        
+        with self._speech_lock:
+            self.pda.speak(text)
 
     def get_current_state(self) -> Optional[bool]:
         """Get current power state.
@@ -122,4 +122,5 @@ class PowerMonitor:
         Returns:
             True if plugged in, False if on battery, None if unknown
         """
-        return self._current_state
+        with self._state_lock:
+            return self._current_state
