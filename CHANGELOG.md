@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-07-05
+
+### Added
+- Custom audio output device selection via config (`audio_device` parameter)
+- GitHub Actions CI/CD workflow for continuous testing (Python 3.8–3.12)
+- Enhanced test suite: 15 tests covering config, voice engine, and power monitoring
+- Detailed event behavior documentation (debounce, thread safety)
+
+### Changed
+- Clarified debounce behavior: rapid duplicate events within same power state are ignored (not queued)
+- Updated README with audio device configuration and listing instructions
+- Improved docstrings in PowerMonitor for event handling clarity
+
+### Fixed
+- `get_audio_device()` handles invalid config values gracefully (returns None with warning)
+
 ## [1.0.0] - 2026-07-05
 
 ### Added
@@ -39,10 +55,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ## Future Roadmap
 
 ### Planned for v1.1.0
-- [ ] Support for custom audio output devices
 - [ ] Configuration GUI for easier setup
-- [ ] More voice model options
+- [ ] Multiple voice model selection (per-event basis)
 - [ ] Performance metrics in debug mode
+- [ ] Advanced debounce/queue strategies for rapid events
 
 ### Planned for v2.0.0
 - [ ] Cross-platform support (macOS, Windows)
