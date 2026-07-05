@@ -1,0 +1,13 @@
+# Core dependencies
+piper-tts>=1.4.0
+pyudev>=0.24.0
+numpy>=1.24.0
+sounddevice>=0.5.0
+onnxruntime>=1.14.0
+
+# Development & testing (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0

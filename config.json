@@ -1,0 +1,16 @@
+{
+  "model_path": "./models/sound/PDA.onnx",
+  "log_level": "INFO",
+  "plug_in_messages": [
+    "External power source detected.",
+    "Charging sequence initiated.",
+    "Primary power online.",
+    "External power restored."
+  ],
+  "plug_out_messages": [
+    "Warning. Operating on internal battery.",
+    "Warning. External power lost.",
+    "Battery mode engaged.",
+    "Warning. Running on internal power."
+  ]
+}

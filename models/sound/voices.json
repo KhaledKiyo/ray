@@ -1,0 +1,27 @@
+{
+    "PDA": {
+        "key": "PDA",
+        "name": "piper",
+        "language": {
+            "code": "en",
+            "family": "en",
+            "region": "US",
+            "name_native": "English",
+            "name_english": "English",
+            "country_english": "United States"
+        },
+        "quality": "PDA",
+        "num_speakers": 1,
+        "speaker_id_map": {},
+        "files": {
+            "PDA.onnx": {
+                "size_bytes": 63516050,
+                "md5_digest": "8d25f75d7f7c3663ce38ac633579bb96"
+            },
+            "PDA.onnx.json": {
+                "size_bytes": 5361 ,
+                "md5_digest": "8493a84272f84374e81eaaa90a90d3d3"
+            }
+        },
+        "aliases": []
+    }}
